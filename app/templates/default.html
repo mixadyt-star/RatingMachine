@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>МШП Помощник</title>
+    <title>RatingMachine</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/adaptive.css') }}">
+
+    <link rel="preload" href="{{ url_for('static', filename='styles/register.css') }}" as="style" onload="this.rel='stylesheet'">
 </head>
 <body>
-    <div class = "menu-container">
-        <div class = "menu-item" name = "main-page-element">
+    <div class="menu-container">
+        <div class="menu-item" name="main-page-element">
             <svg 
                 width="24" 
                 height="24" 
@@ -22,52 +25,11 @@
                 <path d="M17 21H7C4.79086 21 3 19.2091 3 17V10.7076C3 9.30887 3.73061 8.01175 4.92679 7.28679L9.92679 4.25649C11.2011 3.48421 12.7989 3.48421 14.0732 4.25649L19.0732 7.28679C20.2694 8.01175 21 9.30887 21 10.7076V17C21 19.2091 19.2091 21 17 21Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M9 17H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p class = "menu-item-text" name = "main-page-element">
+            <p class="text menu-item-text" name="main-page-element">
                 Главная
             </p>
         </div>
-        <div class = "menu-item" name = "solutions-element">
-            <svg 
-                width="24" 
-                height="24" 
-                stroke-width="2" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                class="menu-item-icon"
-                name="solutions-element"
-            >
-                <path d="M12 21V7C12 5.89543 12.8954 5 14 5H21.4C21.7314 5 22 5.26863 22 5.6V18.7143" stroke="currentColor"   stroke-linecap="round"/>
-                <path d="M12 21V7C12 5.89543 11.1046 5 10 5H2.6C2.26863 5 2 5.26863 2 5.6V18.7143" stroke="currentColor"   stroke-linecap="round"/>
-                <path d="M14 19L22 19" stroke="currentColor"   stroke-linecap="round"/>
-                <path d="M10 19L2 19" stroke="currentColor"   stroke-linecap="round"/>
-                <path d="M12 21C12 19.8954 12.8954 19 14 19" stroke="currentColor"   stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 21C12 19.8954 11.1046 19 10 19" stroke="currentColor"   stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <p class = "menu-item-text" name = "solutions-element">
-                Решения
-            </p>
-        </div>
-        <div class = "menu-item" name = "materials-element">
-            <svg 
-                width="24" 
-                height="24" 
-                stroke-width="2" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                class="menu-item-icon"
-                name="materials-element"
-            >
-                <path d="M21 3.6V20.4C21 20.7314 20.7314 21 20.4 21H3.6C3.26863 21 3 20.7314 3 20.4V3.6C3 3.26863 3.26863 3 3.6 3H20.4C20.7314 3 21 3.26863 21 3.6Z" stroke="currentColor"  stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M3 16L10 13L21 18" stroke="currentColor"  stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M16 10C14.8954 10 14 9.10457 14 8C14 6.89543 14.8954 6 16 6C17.1046 6 18 6.89543 18 8C18 9.10457 17.1046 10 16 10Z" stroke="currentColor"  stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <p class = "menu-item-text" name = "materials-element">
-                Материалы
-            </p>
-        </div>
-        <div class = "menu-item float-to-right" name = "login-element">
+        <div class="menu-item float-to-right" name="login-element">
             <svg 
                 width="24" 
                 height="24" 
@@ -81,8 +43,26 @@
                 <path d="M19 12H12M12 12L15 15M12 12L15 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p class = "menu-item-text" name = "login-element">
+            <p class="text menu-item-text" name="login-element">
                 Войти
+            </p>
+        </div>
+        <div class="menu-item float-to-right" name="register-element">
+            <svg 
+                width="24" 
+                height="24" 
+                stroke-width="2" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                class="menu-item-icon"
+                name="register-element"
+            >
+                <path d="M19 12H12M12 12L15 15M12 12L15 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p class="text menu-item-text" name="register-element">
+                Регистрация
             </p>
         </div>
     </div>
@@ -94,10 +74,19 @@
             window.location.href = window.location.origin + "{{ url_for('main_page') }}"
         }
 
+        function go_to_register() {
+            window.location.href = window.location.origin + "{{ url_for('register') }}"
+        }
+
         main_page_elements = document.getElementsByName("main-page-element")
+        register_elements = document.getElementsByName("register-element")
 
         for (let i = 0; i < main_page_elements.length; i++) {
             main_page_elements[i].onclick = go_to_main_page
+        }
+
+        for (let i = 0; i < register_elements.length; i++) {
+            register_elements[i].onclick = go_to_register
         }
     </script>
 </body>

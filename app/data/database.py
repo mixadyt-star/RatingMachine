@@ -7,12 +7,12 @@ cursor = connection.cursor()
 # Create table Children
 cursor.execute(
 """
-CREATE TABLE Children IF NOT EXISTS (
-id INT NOT NULL AUTO_INCREMENT,
-email TEXT NOT NULL,
-password TEXT NOT NULL,
-full_name TEXT NOT NULL,
-form TEXT
+CREATE TABLE IF NOT EXISTS Children (
+id INT PRIMARY KEY,
+email VARCHAR(255) NOT NULL,
+password VARCHAR(255) NOT NULL,
+full_name VARCHAR(255) NOT NULL,
+form VARCHAR(255)
 )
 """
 )
@@ -20,12 +20,12 @@ form TEXT
 # Create table Teachers
 cursor.execute(
 """
-CREATE TABLE Teachers IF NOT EXISTS (
-id INT NOT NULL AUTO_INCREMENT,
-email TEXT NOT NULL,
-password TEXT NOT NULL,
-full_name TEXT NOT NULL,
-subject TEXT,
+CREATE TABLE IF NOT EXISTS Teachers (
+id INT PRIMARY KEY,
+email VARCHAR(255) NOT NULL,
+password VARCHAR(255) NOT NULL,
+full_name VARCHAR(255) NOT NULL,
+subject VARCHAR(255),
 children TEXT
 )
 """

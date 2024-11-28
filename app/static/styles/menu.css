@@ -31,13 +31,9 @@ body {
 }
 
 .menu-item-text {
-    vertical-align: middle;
     display: inline-block;
     user-select: none;
     line-height: 10px;
-    font-size: medium;
-    font-weight: bold;
-    font-family: "DIN 2014 Rounded", Arial, sans-serif;
     color: #ffffff;
     transition: color 100ms linear;
 }

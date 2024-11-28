@@ -3,7 +3,7 @@ from io import BytesIO
 from typing import List, NoReturn
 
 from documents import word_api
-from documents import security
+from utils import security
 
 def create_word_user(document: Document, data: List[str]) -> NoReturn:
     
@@ -103,21 +103,3 @@ def create_word_users(data: List[List[str]]) -> BytesIO:
     f.seek(0)
 
     return f
-
-if __name__ == "__main__":
-    users = [
-        [
-            "Насыров Амаль Робертович",
-            "8Б",
-            "23.11.2024",
-            "Структура общества"
-        ],
-        [
-            "Насырова Марина Леонидовна",
-            "Работа",
-            "23.11.2024",
-            "Структура общества"
-        ],
-    ]
-
-    create_word_users(users)

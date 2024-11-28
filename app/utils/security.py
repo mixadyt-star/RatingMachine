@@ -1,7 +1,7 @@
-import secrets
-import qrcode
 from hashlib import sha256
 from io import BytesIO
+import secrets
+import qrcode
 
 def create_qrcode(secret_code: int | str) -> BytesIO:
     """
@@ -23,6 +23,3 @@ def create_secret_code(length: int = 20) -> str:
     """
 
     return secrets.token_urlsafe(length)
-
-if __name__ == "__main__":
-    print(create_qrcode(create_secret_code(100)))
