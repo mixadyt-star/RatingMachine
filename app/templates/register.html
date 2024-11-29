@@ -1,6 +1,6 @@
 <div class="wrapper">
     <div class="shadow-block register-block">
-        <form action="register" method="POST">
+        <form action="email_verification" method="POST">
             <div class="grid register-grid">
                 <p class="grid-item text x-large register-text-grid-item">
                     Зарегистрируйтесь
@@ -9,7 +9,7 @@
                     <label class="text" for="email-input" type="email">
                         Почта
                     </label>
-                    <input class="input-text" id="email-input" placeholder="Ваша почта...">
+                    <input class="input-text" id="email-input" name="email" placeholder="Ваша почта...">
                 </div>
                 <script>
                     function password_eye_click(password_id, eye_id) {
@@ -28,7 +28,7 @@
                             password_input.type = "password"
                             password_eye.innerHTML = `
                             <path d="M3 13C6.6 5 17.4 5 21 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 17C10.3431 17 9 15.6569 9 14C9 12.3431 10.3431 11 12 11C13.6569 11 15 12.3431 15 14C15 15.6569 13.6569 17 12 17Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17C10.3431 17 9 15.6569 9 14C9 12.3431 10.3431 11 12 11C13.6569 11 15 12.3431 15 14C15 15.6569 13.6569 17 12 17Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                             `
                         }
                     }
@@ -37,7 +37,7 @@
                     <label class="text" for="password-input">
                         Пароль
                     </label>
-                    <input class="input-text password-input" id="password-input" placeholder="Придумайте пароль..." type="password">
+                    <input class="input-text password-input" id="password-input" name="password" placeholder="Придумайте пароль..." type="password">
                     <svg 
                         width="24" 
                         height="24" 

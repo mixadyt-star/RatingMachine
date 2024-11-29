@@ -3,26 +3,16 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP_SSL
 import hashlib
-import json
 import ssl
 
+from data import storing
 import config
 
-#TODO: clear when expires
-def store_code(email: str, code: str) -> NoReturn:
-    with open("data/email_codes.json", 'r') as f:
-        codes = json.loads(f.read())
+def store_code(email: str, code: str | int) -> NoReturn:
+    storing.store("data/email_codes.json", email, str(code))
 
-    codes[email] = code
-
-    with open("data/email_codes.json", 'w') as f:
-        f.write(json.dumps(codes))
-
-def get_code(email: str) -> str:
-    with open("data/email_codes.json", 'r') as f:
-        codes = json.loads(f.read())
-
-    return codes.get(email)
+def get_code(email: str) -> str | None:
+    storing.get_value("data/email_codes.json", email)
 
 def send_email(receiver: str, subject: str, body: str) -> NoReturn:
     context = ssl.create_default_context()
@@ -38,10 +28,10 @@ def send_email(receiver: str, subject: str, body: str) -> NoReturn:
         server.sendmail(config.SENDER_EMAIL, receiver, message.as_string())
         server.quit()
 
-def send_verification(receiver: str, code: str) -> NoReturn:
+def send_verification(receiver: str, code: str | int) -> NoReturn:
     verification_message = """
     Чтобы закончить регистрацию, подтвердите свою почту. Для этого введите код в поле на странице:
     <h1 style = "margin-top: 50px;text-align: center">{}</h1>
     """
 
-    send_email(receiver, "Подтверждение почты", verification_message.format(code))
+    send_email(receiver, "Подтверждение почты", verification_message.format(str(code)))
