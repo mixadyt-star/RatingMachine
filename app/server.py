@@ -21,6 +21,13 @@ def init_page(target_page, variables = None):
 def main_page():
     return init_page("main.html")
 
+@app.route("/login", methods = ["GET", "POST"])
+def login():
+    if (request.method == "GET"):
+        return init_page("login.html");
+    elif (request.method == "POST"):
+        pass
+
 @app.route("/register", methods = ["GET"])
 def register():
     return init_page("register.html")
@@ -40,25 +47,6 @@ def email_verification():
 
     return init_page("email_verification.html")
 
-# # TODO: remove it
-# @app.route("/api/generate_email_code", methods = ["GET", "POST"])
-# def generate_email_code():
-#     code = security.create_secret_code()
-
-#     email = request.args.get("email")
-#     email_worker.store_code(email, code)
-
-#     return "YEAP"
-
-# # TODO: remove it
-# @app.route("/api/verificate_email", methods = ["GET", "POST"])
-# def verificate_email():
-#     code = request.args.get("code", None)
-
-#     email = request.args.get("email")
-#     password = request.args.get("password")
-
-#     #TODO: register page
 # # TODO: remove it
 # @app.route("/api/register", methods = ["GET", "POST"])
 # def register():

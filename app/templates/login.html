@@ -1,11 +1,11 @@
 <div class="wrapper">
     <div class="shadow-block">
-        <form action="email_verification" method="POST">
-            <div class="grid register-grid">
-                <p class="grid-item text x-large register-text-grid-item">
-                    Зарегистрируйтесь
+        <form action="login" method="POST">
+            <div class="grid login-grid">
+                <p class="grid-item text x-large login-text-grid-item">
+                    Войдите
                 </p>
-                <div class="grid-item wrapper input-wrapper register-email-grid-item">
+                <div class="grid-item wrapper input-wrapper login-email-grid-item">
                     <label class="text" for="email-input" type="email">
                         Почта
                     </label>
@@ -33,11 +33,11 @@
                         }
                     }
                 </script>
-                <div class="grid-item wrapper input-wrapper register-password-grid-item">
+                <div class="grid-item wrapper input-wrapper login-password-grid-item">
                     <label class="text" for="password-input">
                         Пароль
                     </label>
-                    <input class="input-text password-input" id="password-input" name="password" placeholder="Придумайте пароль..." type="password">
+                    <input class="input-text password-input" id="password-input" name="password" placeholder="Ваш пароль от аккаунта..." type="password">
                     <svg 
                         width="24" 
                         height="24" 
@@ -53,28 +53,8 @@
                         <path d="M12 17C10.3431 17 9 15.6569 9 14C9 12.3431 10.3431 11 12 11C13.6569 11 15 12.3431 15 14C15 15.6569 13.6569 17 12 17Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
-                <div class="grid-item wrapper input-wrapper register-repassword-grid-item">
-                    <label class="text" for="repassword-input">
-                        Повторите пароль
-                    </label>
-                    <input class="input-text password-input" id="repassword-input" placeholder="Повторите пароль..." type="password">
-                    <svg 
-                        width="24" 
-                        height="24" 
-                        viewBox="0 0 24 24" 
-                        stroke-width="2" 
-                        fill="none" 
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="password-eye-icon"
-                        id="repassword-eye"
-                        onclick="password_eye_click('repassword-input', 'repassword-eye')"
-                    >
-                        <path d="M3 13C6.6 5 17.4 5 21 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 17C10.3431 17 9 15.6569 9 14C9 12.3431 10.3431 11 12 11C13.6569 11 15 12.3431 15 14C15 15.6569 13.6569 17 12 17Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <div class="grid-item wrapper input-wrapper register-submit-grid-item">
-                    <input class="input-text text input-submit" type="submit" value="Зарегистрироватся">
+                <div class="grid-item wrapper input-wrapper login-submit-grid-item">
+                    <input class="input-text text input-submit" type="submit" value="Войти">
                 </div>
             </div>
         </form>

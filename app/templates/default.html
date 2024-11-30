@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/adaptive.css') }}">
 
     <link rel="preload" href="{{ url_for('static', filename='styles/register.css') }}" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="{{ url_for('static', filename='styles/login.css') }}" as="style" onload="this.rel='stylesheet'">
 </head>
 <body>
     <div class="menu-container">
@@ -78,16 +79,21 @@
             window.location.href = window.location.origin + "{{ url_for('register') }}"
         }
 
-        main_page_elements = document.getElementsByName("main-page-element")
-        register_elements = document.getElementsByName("register-element")
-
-        for (let i = 0; i < main_page_elements.length; i++) {
-            main_page_elements[i].onclick = go_to_main_page
+        function go_to_login() {
+            window.location.href = window.location.origin + "{{ url_for('login') }}"
         }
 
-        for (let i = 0; i < register_elements.length; i++) {
-            register_elements[i].onclick = go_to_register
+        function add_on_click_for_name(name, func) {
+            elements = document.getElementsByName(name)
+
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].onclick = func
+            }
         }
+
+        add_on_click_for_name("main-page-element", go_to_main_page)
+        add_on_click_for_name("register-element", go_to_register)
+        add_on_click_for_name("login-element", go_to_login)
     </script>
 </body>
 </html>
