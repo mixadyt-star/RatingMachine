@@ -4,6 +4,7 @@ from threading import Thread
 from documents import generator
 from utils import email_worker, security
 from data import database
+import config
 
 app = Flask(__name__, template_folder = "templates")
 
@@ -23,10 +24,31 @@ def main_page():
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
+    variables = {
+        "server_origin": config.SERVER_ORIGIN
+    }
+
     if (request.method == "GET"):
-        return init_page("login.html");
+        return init_page("login.html", variables=variables)
+    
     elif (request.method == "POST"):
-        pass
+        data = request.json
+        if (data["type"] == "Child"):
+            user_data = database.search_for_child(data["email"])
+        elif (data["type"] == "Teacher"):
+            user_data = database.search_for_teacher(data["email"])
+
+        if (user_data):
+            if (user_data[2] == security.hash(data["password"])):
+                session["email"] = data["email"]
+                session["password"] = data["password"]
+                session["login"] = True
+
+                return {"login": True, "error_message": ""}
+            else:
+                return {"login": False, "error_message": "Неправильный пароль или почта аккаунта"}
+        else:
+            return {"login": False, "error_message": "Неправильный пароль или почта аккаунта"}
 
 @app.route("/register", methods = ["GET"])
 def register():
