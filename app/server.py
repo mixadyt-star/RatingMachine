@@ -20,9 +20,44 @@ def init_page(target_page, variables = {}):
     variables["login"] = session.get("login", False)
     return render_template("default.html", target_page = target_page, variables = variables)
 
+def check_login():
+    user_login = session.get("login", None)
+    user_type = session.get("type", None)
+    user_email = session.get("email", None)
+    user_password = session.get("password", None)
+
+    if (user_login and user_type and user_email and user_password):
+        return database.check_login(user_email, user_password, user_type)
+    
+    return False
+
 @app.route('/', methods = ["GET"])
 def main_page():
     return init_page("main.html")
+
+@app.route("/children", methods = ["GET"])
+@web_errors.ErrorChecker
+def children():
+    if (not session.get("login", False) ):
+        return (1, web_errors.PAGE, "Вы не вошли в аккаунт", None) # AccessError
+    
+    if (check_login() and session["type"] == "Teacher"):
+        return (0, web_errors.PAGE, '', init_page("children.html"))
+    
+    return (1, web_errors.PAGE, "Данный раздел доступен только учителям", None) # AccessError
+
+@app.route("/logout", methods = ["POST"])
+@web_errors.ErrorChecker
+def logout():
+    if (not session.get("login", False)):
+        return (1, web_errors.JSON, "Вы не вошли в аккаунт", None) # AccessError
+    
+    session["login"] = False
+    session.pop("email", None)
+    session.pop("password", None)
+    session.pop("type", None)
+
+    return (0, web_errors.JSON, '', {"logout": True})
 
 @app.route("/login", methods = ["GET", "POST"])
 @web_errors.ErrorChecker
@@ -31,16 +66,13 @@ def login():
         "server_origin": config.SERVER_ORIGIN
     }
 
+    if check_login():
+        return (1, web_errors.PAGE, "Вы уже вошли в аккаунт", None) # AccessError
+
     if (request.method == "GET"):
-        if (session.get("login", False)):
-            return (1, web_errors.PAGE, "Вы уже вошли в аккаунт", None) # AccessError
-        
         return (0, web_errors.PAGE, '', init_page("login.html", variables=variables))
     
     elif (request.method == "POST"):
-        if (session.get("login", False)):
-            return (1, web_errors.JSON, "Вы уже вошли в аккаунт", None) # AccessError
-
         try:
             user_data = json.loads(request.data)
         except json.JSONDecodeError:
@@ -52,23 +84,18 @@ def login():
         if (user_type == None or user_email == None or user_password == None):
             return (3, web_errors.JSON, "Заполнены не все поля", None)
 
-        if (user_type == "Child"):
-            user_data_loaded = database.search_for_child(user_email)
-        elif (user_type == "Teacher"):
-            user_data_loaded = database.search_for_teacher(user_email)
+        if (user_type == "Child" or user_type == "Teacher"):
+            user_login = database.check_login(user_email, user_password, user_type)
         else:
             return (4, web_errors.JSON, "Некорректный запрос", None) # TypeNotCorrectError
 
-        if (user_data_loaded):
-            user_password_loaded = user_data_loaded[2]
-            if (user_password_loaded == security.hash(user_password)):
-                session["email"] = user_email
-                session["password"] = user_password
-                session["login"] = True
+        if (user_login):
+            session["type"] = user_type
+            session["email"] = user_email
+            session["password"] = user_password
+            session["login"] = True
 
-                return (0, web_errors.JSON, '', {"login": True})
-            else:
-                return (5, web_errors.JSON, "Неправильный пароль или почта аккаунта", None) # UserOrPasswordWrongError
+            return (0, web_errors.JSON, '', {"login": True})
         else:
             return (5, web_errors.JSON, "Неправильный пароль или почта аккаунта", None) # UserOrPasswordWrongError
 

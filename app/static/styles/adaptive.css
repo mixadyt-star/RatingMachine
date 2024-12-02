@@ -74,9 +74,9 @@
     height: 20px;
     background: var(--circle), var(--circle), var(--circle);
     background-size: 15px 15px;
-    animation: l9 1s infinite alternate;
+    animation: loader 1s infinite alternate;
   }
-  @keyframes l9 {
+  @keyframes loader {
     0% {
       background-position: 0 50%, 50% 50%, 100% 50%;
     }
