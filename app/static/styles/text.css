@@ -1,0 +1,13 @@
+.text {
+    line-height: 15px;
+    font-weight: bold;
+    font-family: "DIN 2014 Rounded", Arial, sans-serif;
+}
+
+.x-large {
+    font-size: x-large;
+}
+
+.xx-large {
+    font-size: xx-large;
+}

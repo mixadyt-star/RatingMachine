@@ -4,10 +4,10 @@ import os
 
 def store(file: str, key: str, value: str) -> NoReturn:
     if (not os.path.exists(file)):
-        with open(file, 'w') as f:
+        with open(file, 'w', encoding = "utf-8") as f:
             f.write('{}')
 
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding = "utf-8") as f:
         data = json.loads(f.read())
 
     data[key] = value
@@ -15,11 +15,11 @@ def store(file: str, key: str, value: str) -> NoReturn:
     with open(file, 'w') as f:
         f.write(json.dumps(data))
 
-def get_value(file: str, key: str) -> str | None:
+def get_data(file: str) -> dict | None:
     if (os.path.exists(file)):
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding = "utf-8") as f:
             data = json.loads(f.read())
 
-        return data.get(key, None)
+        return data
     else:
         return None

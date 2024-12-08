@@ -12,7 +12,7 @@ def store_code(email: str, code: str | int) -> NoReturn:
     storing.store("data/email_codes.json", email, str(code))
 
 def get_code(email: str) -> str | None:
-    storing.get_value("data/email_codes.json", email)
+    storing.get_data("data/email_codes.json")[email]
 
 def send_email(receiver: str, subject: str, body: str) -> NoReturn:
     context = ssl.create_default_context()

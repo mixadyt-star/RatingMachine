@@ -3,8 +3,8 @@ from threading import Thread
 import json
 
 from utils import email_worker, security, web_errors
+from data import database, storing
 from documents import generator
-from data import database
 import config
 
 app = Flask(__name__, template_folder = "templates")
@@ -17,8 +17,17 @@ if (secret_code_app == None):
 app.secret_key = secret_code_app
 
 def init_page(target_page, variables = {}):
-    variables["login"] = session.get("login", False)
-    return render_template("default.html", target_page = target_page, variables = variables)
+    data = storing.get_data("data/menu.json")
+    menu_items = []
+
+    login = session.get("login", False)
+    permission = "teacher" if login else "guest"
+
+    for menu_item in data:
+        if permission in menu_item["permission"]:
+            menu_items.append(menu_item)
+
+    return render_template("default.html", target_page = target_page, variables = variables, menu_items = menu_items)
 
 def check_login():
     user_login = session.get("login", None)
@@ -62,15 +71,11 @@ def logout():
 @app.route("/login", methods = ["GET", "POST"])
 @web_errors.ErrorChecker
 def login():
-    variables = {
-        "server_origin": config.SERVER_ORIGIN
-    }
-
     if check_login():
         return (1, web_errors.PAGE, "Вы уже вошли в аккаунт", None) # AccessError
 
     if (request.method == "GET"):
-        return (0, web_errors.PAGE, '', init_page("login.html", variables=variables))
+        return (0, web_errors.PAGE, '', init_page("login.html"))
     
     elif (request.method == "POST"):
         try:
@@ -78,9 +83,10 @@ def login():
         except json.JSONDecodeError:
             return (2, web_errors.JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
         
-        user_type = user_data.get("type", '')
-        user_email = user_data.get("email", '')
-        user_password = user_data.get("password", '')
+        user_type = user_data.get("type", None)
+        user_email = user_data.get("email", None)
+        user_password = user_data.get("password", None)
+
         if (user_type == None or user_email == None or user_password == None):
             return (3, web_errors.JSON, "Заполнены не все поля", None)
 
@@ -100,21 +106,28 @@ def login():
             return (5, web_errors.JSON, "Неправильный пароль или почта аккаунта", None) # UserOrPasswordWrongError
 
 @app.route("/register", methods = ["GET"])
+@web_errors.ErrorChecker
 def register():
-    return init_page("register.html")
+    if check_login():
+        return (1, web_errors.PAGE, "Вы уже вошли в аккаунт", None) # AccessError
+    
+    return (0, web_errors.PAGE, '', init_page("register.html"))
 
 @app.route("/email_verification", methods = ["POST"])
 def email_verification():
-    email = request.form.get("email", None)
-    password = request.form.get("password", None)
+    if check_login():
+        return (1, web_errors.PAGE, "Вы уже вошли в аккаунт", None) # AccessError
+    
+    user_email = request.form.get("email", None)
+    user_password = request.form.get("password", None)
 
-    session["email"] = email
-    session["password"] = security.hash(password)
+    if (user_email == None or user_password == None):
+        return (4, web_errors.PAGE, "Некорректный запрос", None) # TypeNotCorrectError
 
     verification_code = security.create_secret_code(length = 8).lower()
-    email_worker.store_code(email, verification_code)
+    email_worker.store_code(user_email, verification_code)
 
-    Thread(target = email_worker.send_verification, args = [email, verification_code]).start()
+    Thread(target = email_worker.send_verification, args = [user_email, verification_code]).start()
 
     return init_page("email_verification.html")
 

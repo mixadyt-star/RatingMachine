@@ -1,0 +1,54 @@
+<div class="wrapper">
+    <div class="shadow-block">
+        <div class="grid email-ver-grid">
+            <div class="grid-item wrapper diget-wrapper email-ver-1d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="1">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-2d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="2">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-3d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="3">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-4d-grid-item" name="digit-input" >
+                <input class="input-text input-text-diget text xx-large" maxlength="1"id="4">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-5d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="5">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-6d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="6">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-7d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="7">
+            </div>
+            <div class="grid-item wrapper diget-wrapper email-ver-8d-grid-item" name="digit-input">
+                <input class="input-text input-text-diget text xx-large" maxlength="1" id="8">
+            </div>
+            <script>
+                const inputs = document.querySelectorAll('.input-text')
+        
+                for (let i = 0; i < inputs.length; i++) {
+                    inputs[i].addEventListener('input', function(event) {
+                        const currentInput = event.target
+                        const index = parseInt(currentInput.id) - 1
+        
+                        if (currentInput.value.length >= currentInput.maxLength) {
+                            if (index + 1 < inputs.length) {
+                                setTimeout(() => {
+                                    inputs[index + 1].focus()
+                                    inputs[index + 1].click()
+                                }, 1000)
+                            }
+                        }
+                    });
+                }
+
+                setTimeout(() => {
+                    inputs[0].focus()
+                    inputs[0].click()
+                }, 1000)
+            </script>
+        </div>
+    </div>
+</div>

@@ -31,7 +31,7 @@ class FewValuesError(WebError):
         super().__init__(error_code = 3)
 
 class TypeNotCorrectError(WebError):
-    def __init__(self):
+    def __init__(self, message = "Некорректный запрос"):
         super().__init__(error_code = 4)
 
 class UserOrPasswordWrongError(WebError):

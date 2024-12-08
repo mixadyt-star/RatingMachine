@@ -31,7 +31,7 @@ def store_secret_code(secret_code: str | int) -> NoReturn:
     storing.store("data/secret_code.json", "secret_code", str(secret_code))
 
 def get_secret_code() -> str | None:
-    return storing.get_value("data/secret_code.json", "secret_code")
+    return storing.get_data("data/secret_code.json")["secret_code"]
 
 def create_secret_code(length: int = 20) -> str:
     """

@@ -1,0 +1,23 @@
+.notification {
+    padding: 5px 20px;
+    border-radius: 5px;
+    user-select: none;
+    color: #cd0505;
+    background-color: #fff;
+    box-shadow: 0 2px 10px #000a;
+    cursor: pointer;
+}
+
+.notification-wrapper {
+    height: initial;
+    max-width: 500px;
+    top: 60px;
+    right: -500px;
+    position: fixed;
+    z-index: 999;
+    transition: right 200ms cubic-bezier(.19,1,.22,1)
+}
+
+.notification-wrapper.show {
+    right: 0px;
+}

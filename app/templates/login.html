@@ -1,9 +1,8 @@
-{%set server_origin = variables["server_origin"]%}
 <div class="wrapper">
     <div class="shadow-block">
         <div class="grid login-grid">
             <p class="grid-item text x-large login-text-grid-item">
-                Войдите
+                Добро пожаловать
             </p>
             <div class="grid-item wrapper input-wrapper login-email-grid-item">
                 <label class="text" for="email-input" type="email">
@@ -37,7 +36,7 @@
                 <label class="text" for="password-input">
                     Пароль
                 </label>
-                <input class="input-text password-input" id="password-input" name="password" placeholder="Ваш пароль от аккаунта..." type="password">
+                <input class="input-text input-password" id="password-input" name="password" placeholder="Ваш пароль от аккаунта..." type="password">
                 <svg 
                     width="24" 
                     height="24" 
@@ -53,53 +52,6 @@
                     <path d="M12 17C10.3431 17 9 15.6569 9 14C9 12.3431 10.3431 11 12 11C13.6569 11 15 12.3431 15 14C15 15.6569 13.6569 17 12 17Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <script>
-                async function sha256(message) {
-                    const msgBuffer = new TextEncoder().encode(message);                    
-                    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                    const hashArray = Array.from(new Uint8Array(hashBuffer));               
-                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                    return hashHex;
-                }
-
-                async function check_login() {
-                    error_text = document.getElementById("error-text")
-                    error_text.setAttribute("style", "visibility: hidden;")
-
-                    submit_button = document.getElementById("submit-login")
-                    submit_button.innerHTML = '<div class="loader"></div>'
-                    submit_button.disabled = true
-
-                    email = document.getElementById("email-input").value
-                    password = await sha256(document.getElementById("password-input").value)
-
-                    fetch("{{ server_origin }}/login", {
-                        method: "POST",
-                        body: JSON.stringify({
-                          type: "Teacher",
-                          email: email,
-                          password: password
-                        }),
-                        headers: {
-                          "Content-type": "application/json; charset=UTF-8"
-                        }
-                      })
-                        .then((response) => response.json())
-                        .then(function (json) {
-                            if (json["error"]) {
-                                error_text.innerText = json["error_message"]
-                                error_text.setAttribute("style", "visibility: visible;")
-                                submit_button.disabled = false
-
-                                submit_button.innerText = "Войти"
-                            } else {
-                                if (json["payload"]["login"] == true) {
-                                    window.location.href = "{{ server_origin }}/"
-                                }
-                            }
-                        });
-                }
-            </script>
             <div class="grid-item wrapper input-wrapper login-submit-grid-item">
                 <button class="input-text text input-submit" id="submit-login" onclick="check_login()">
                     Войти
