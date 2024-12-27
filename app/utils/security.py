@@ -18,10 +18,10 @@ def create_qrcode(secret_code: int | str) -> BytesIO:
     Returns byte stream qr code
     """
 
-    hash = hash(secret_code)
+    hashed_code = hash(secret_code)
 
     image_data = BytesIO()
-    image = qrcode.make(hash)
+    image = qrcode.make(hashed_code)
     image.save(image_data, fromat = "png")
 
     image_data.seek(0)

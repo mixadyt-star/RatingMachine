@@ -103,3 +103,13 @@ def create_word_users(data: List[List[str]]) -> BytesIO:
     f.seek(0)
 
     return f
+
+if __name__ == "__main__":
+    create_word_users(
+        [
+            "Name",
+            "Form",
+            "1.01.1990",
+            "Someting for test"
+        ]
+    )
