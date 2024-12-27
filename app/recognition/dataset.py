@@ -1,7 +1,6 @@
 import PIL.Image
 import cv2
 import PIL
-import torch
 from torch.utils.data import Dataset
 from torchvision import transforms 
 
