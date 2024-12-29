@@ -38,15 +38,20 @@ class UserOrPasswordWrongError(WebError):
     def __init__(self):
         super().__init__(error_code = 5)
 
+class ContentDeleted(WebError):
+    def __init__(self):
+        super().__init__(error_code = 6)
+
 errors = {
     1: AccessError,
     2: JsonDecodeError,
     3: FewValuesError,
     4: TypeNotCorrectError,
-    5: UserOrPasswordWrongError
+    5: UserOrPasswordWrongError,
+    6: ContentDeleted
 }
 
-def ErrorChecker(func):
+def error_checker(func):
     def inner():
         error_code, type, message, payload = func()
 

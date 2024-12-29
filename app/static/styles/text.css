@@ -1,10 +1,37 @@
+.text-input {
+    width: 100%;
+    height: 50px;
+  
+    line-height: 15px;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: "DIN 2014 Rounded", Arial, sans-serif;
+    text-align: center;
+  
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.align-text-left {
+    text-align: start;
+}
+
+.align-text-right {
+    text-align: end;
+}
+
 .text {
     line-height: 15px;
     font-weight: bold;
     font-family: "DIN 2014 Rounded", Arial, sans-serif;
 }
 
+.larger {
+    font-size: larger;
+}
+
 .x-large {
+    line-height: 20px;
     font-size: x-large;
 }
 

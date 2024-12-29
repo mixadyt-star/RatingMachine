@@ -1,4 +1,4 @@
-from typing import NoReturn, Literal
+from typing import NoReturn, List
 import sqlite3
 
 from utils import security
@@ -10,11 +10,10 @@ cursor = connection.cursor()
 cursor.execute(
 """
 CREATE TABLE IF NOT EXISTS Children (
-id INT PRIMARY KEY,
-email VARCHAR(255) NOT NULL,
-password VARCHAR(255) NOT NULL,
+id INTEGER PRIMARY KEY AUTOINCREMENT,
 full_name VARCHAR(255) NOT NULL,
-form VARCHAR(255)
+form VARCHAR(255) NOT NULL,
+marks TEXT NOT NULL
 )
 """
 )
@@ -23,52 +22,95 @@ form VARCHAR(255)
 cursor.execute(
 """
 CREATE TABLE IF NOT EXISTS Teachers (
-id INT PRIMARY KEY,
+id INTEGER PRIMARY KEY AUTOINCREMENT,
 email VARCHAR(255) NOT NULL,
 password VARCHAR(255) NOT NULL,
-full_name VARCHAR(255) NOT NULL,
-subject VARCHAR(255),
-children TEXT
+full_name VARCHAR(255),
+subject VARCHAR(255)
 )
 """
 )
 
 connection.commit()
 cursor.close()
+connection.close()
 
-def search_for_user(email: str, type: Literal["Child", "Teacher"]) -> tuple:
+def get_children(form: str) -> List[tuple]:
     connection = sqlite3.connect("main.db")
     cursor = connection.cursor()
 
-    if (type == "Child"):
-        cursor.execute("SELECT * FROM Children WHERE email = ?", (email,))
-    elif (type == "Teacher"):
-        cursor.execute("SELECT * FROM Teachers WHERE email = ?", (email,))
-
-    data = cursor.fetchone()
+    cursor.execute("SELECT * FROM Children \
+                    WHERE form = ? \
+                    ORDER BY full_name ASC", (form,))
+    data = cursor.fetchall()
 
     cursor.close()
+    connection.close()
 
     return data
 
-def register(email: str, password: str, full_name: str, type: Literal["Child", "Teacher"]) -> NoReturn:
+def search_for_teacher(email: str) -> tuple:
     connection = sqlite3.connect("main.db")
     cursor = connection.cursor()
 
-    if (type == "Child"):
-        cursor.execute("INSERT INTO Children (email, password, full_name) \
-                    VALUES (?, ?, ?)", 
-                    email, password, full_name)
-    elif (type == "Teacher"):
-        cursor.execute("INSERT INTO Teachers (email, password, full_name) \
-                   VALUES (?, ?, ?)",
-                   email, password, full_name)
+    cursor.execute("SELECT * FROM Teachers WHERE email = ?", (email,))
+    data = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return data
+
+def delete_child(id: int):
+    connection = sqlite3.connect("main.db")
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM Children \
+                   WHERE id = ?", (id,))
     
     connection.commit()
     cursor.close()
+    connection.close()
 
-def check_login(email: str, password: str, type: Literal["Child", "Teacher"]) -> bool:
-    user_data = search_for_user(email, type)
+def check_child(id: int) -> bool:
+    connection = sqlite3.connect("main.db")
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM Children \
+                    WHERE id = ?", (id,))
+    alive = bool(cursor.fetchone())
+
+    cursor.close()
+    connection.close()
+
+    return alive
+
+def register_child(full_name: str, form: str) -> NoReturn:
+    connection = sqlite3.connect("main.db")
+    cursor = connection.cursor()
+
+    cursor.execute("INSERT INTO Children (full_name, form, marks) \
+                    VALUES (?, ?, ?)",
+                    (full_name, form, "{}"))
+    
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+def register_teacher(email: str, password: str) -> NoReturn:
+    connection = sqlite3.connect("main.db")
+    cursor = connection.cursor()
+
+    cursor.execute("INSERT INTO Teachers (email, password) \
+                    VALUES (?, ?)",
+                    (email, password))
+    
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+def check_login(email: str, password: str) -> bool:
+    user_data = search_for_teacher(email)
 
     if (user_data):
         loaded_password = user_data[2]

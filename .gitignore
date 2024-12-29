@@ -9,3 +9,5 @@ main.db
 email_codes.json
 
 secret_code.json
+
+.vscode
