@@ -37,14 +37,14 @@ class RecognitionModel(Module):
         super().__init__()
         
         # Input 1x80x180
-        self.block1 = CNNBlock(1, 32) # Block1 32x40x90
-        self.block2 = CNNBlock(32, 64) # Block2 64x20x45
-        self.block3 = CNNBlock(64, 128) # Block3 128x10x22
-        self.block4 = CNNBlock(128, 200) # Block4 200x10x22
-        self.gmp = AdaptiveMaxPool2d(output_size = 1) # GlobalMaxPool 200x1x1
-        self.rshp = lambda x: x.reshape(-1, 200) # Reshape 200
+        self.block1 = CNNBlock(1, 16) # Block1 16x40x90
+        self.block2 = CNNBlock(16, 32) # Block2 32x20x45
+        self.block3 = CNNBlock(32, 32) # Block3 32x10x22
+        self.block4 = CNNBlock(32, 64) # Block4 200x10x22
+        self.gmp = AdaptiveMaxPool2d(output_size = 1) # GlobalMaxPool 64x1x1
+        self.rshp = lambda x: x.reshape(-1, 64) # Reshape 64
         self.linear1 = Linear(
-            in_features = 200,
+            in_features = 64,
             out_features = 64
         )
         self.batchnorm = BatchNorm1d(num_features = 64)
@@ -52,7 +52,7 @@ class RecognitionModel(Module):
         self.dropout = Dropout(0)
         self.linear2 = Linear(
             in_features = 64,
-            out_features = 35
+            out_features = 36
         )
         self.act2 = Softmax(dim = 1)
 

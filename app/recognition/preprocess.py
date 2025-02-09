@@ -43,12 +43,6 @@ def find_cells(table_image: MatLike) -> List[MatLike]:
     table_cnts = cv2.findContours(threshholded_table, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     table_cnts = table_cnts[0] if len(table_cnts) == 2 else table_cnts[1]
 
-    # Filter image
-    for cnt in table_cnts:
-        area = cv2.contourArea(cnt)
-        if area < config.MAX_TABLE_AREA:
-            cv2.drawContours(threshholded_table, [cnt], -1, (0,0,0), -1)
-
     inverted_table = 255 - threshholded_table
     cells_cnts = cv2.findContours(inverted_table, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cells_cnts = cells_cnts[0] if len(cells_cnts) == 2 else cells_cnts[1]
@@ -56,6 +50,8 @@ def find_cells(table_image: MatLike) -> List[MatLike]:
     cells = []
 
     for cnt in cells_cnts:
+        tmp = table_image.copy()
+        
         _, _, w, h = cv2.boundingRect(cnt)
         area = cv2.contourArea(cnt)
 

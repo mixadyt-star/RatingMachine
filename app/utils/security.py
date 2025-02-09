@@ -1,8 +1,12 @@
+from pyzbar.pyzbar import decode
+from cv2.typing import MatLike
 from typing import NoReturn
 from hashlib import sha256
 from io import BytesIO
+from PIL import Image
 import secrets
 import qrcode
+import cv2
 
 from data import storing
 
@@ -26,6 +30,11 @@ def create_qrcode(secret_code: int | str) -> BytesIO:
 
     image_data.seek(0)
     return image_data
+
+def read_qrcode(img: MatLike) -> str:
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    decocdeQR = decode(Image.fromarray(img))
+    return decocdeQR[0].data.decode('ascii')
 
 def store_secret_code(secret_code: str | int) -> NoReturn:
     storing.store("data/secret_code.json", "secret_code", str(secret_code))

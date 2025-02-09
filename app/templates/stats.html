@@ -1,0 +1,42 @@
+<script>
+    null_form()
+</script>
+<div class="wrapper">
+    <div class="shadow-block">
+        <div class="grid tests-grid">
+            <div class="grid-item grid-item-wrapper">
+                <svg 
+                    width="50"
+                    height="50"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="icon inline"
+                    onclick="window.location.href = window.location.origin + '/'"
+                >
+                    <path d="M4.5 8C8.5 8 11 8 15 8C15 8 15 8 15 8C15 8 20 8 20 12.7059C20 18 15 18 15 18C11.5714 18 9.71429 18 6.28571 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7.5 11.5C6.13317 10.1332 5.36683 9.36683 4 8C5.36683 6.63317 6.13317 5.86683 7.5 4.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="inline">
+                    <p class="text x-large classic-red-color no-margin" style="width: initial;">
+                        {{ variables.get("subject").upper() }}
+                    </p>
+                </div>
+            </div>
+            <div class="grid-item grid-item-wrapper diogram-image-grid-item">
+                <img src="{{ variables.get('diogram_uri') }}">
+            </div>
+            <div class="grid-item grid-item-wrapper first-class-grid-item">
+                <button class="button text larger" onclick="window.location.href = window.location.origin + '/stats/class?subject={{ variables['subject'] }}&class=10'">
+                    10 класс
+                </button>
+            </div>
+            <div class="grid-item grid-item-wrapper second-class-grid-item">
+                <button class="button text larger" onclick="window.location.href = window.location.origin + '/stats/class?subject={{ variables['subject'] }}&class=11'">
+                    11 класс
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,9 +8,55 @@ form {
   height: 100%;
 }
 
-.icon {
-  vertical-align: middle;
+table {
+  width: 100%;
+  height: 100%;
 
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  padding: 6px;
+
+  height: 30px;
+
+  border: 1px solid black;
+}
+
+.hidden {
+  visibility: hidden;
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.show {
+  visibility: visible;
+
+  opacity: 1;
+
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.dark-background {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: #0004;
+}
+
+.inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon {
   width: 20px;
 
   cursor: pointer;
@@ -34,7 +80,7 @@ form {
   margin-left: auto;
   margin-right: auto;
   padding: 0 15px;
-  height: 400px;
+  height: 600px;
   max-width: 1200px;
   box-sizing: border-box;
 
@@ -45,13 +91,45 @@ form {
   position: relative;
 
   margin: auto;
-  padding: 0 15px;
+  padding: 15px;
   width: 100%;
   height: 100%;
-  max-width: 800px;
   box-sizing: border-box;
 
   align-content: center;
+}
+
+.baseline-content {
+  align-content: baseline !important;
+}
+
+.dropdown-content {
+  width: 100%;
+  max-height: 0;
+
+  border: 0px solid #ccc;
+  overflow: hidden;
+
+  transition: max-height 0.3s ease, border 0.3s ease;
+}
+
+.dropdown-content.show {
+  max-height: 100%;
+
+  border: 1px solid #ccc;
+}
+
+.dropdown-content label {
+  padding: 3px;
+
+  display: block;
+
+  cursor: pointer;
+  transition: background-color 0.1s linear;
+}
+
+.dropdown-content label:hover {
+  background-color: #0001;
 }
 
 .button {

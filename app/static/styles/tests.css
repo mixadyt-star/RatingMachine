@@ -1,0 +1,37 @@
+.tests-grid {
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.test-name-grid-item {
+    grid-row: 0;
+    grid-column: 2 / span 2;
+}
+
+.theme-grid-item {
+    grid-column: 2 / span 3;
+}
+
+.children-option-grid-item {
+    grid-column: 1;
+}
+
+.edit-test-grid {
+    grid-template-rows: 100px auto auto;
+    grid-template-columns: 1fr;
+}
+
+.edit-quests-grid {
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.quest-test-name-grid-item {
+    grid-row: 1;
+    grid-column: 1 / span 2;
+}
+
+.upload-blanks-grid-item {
+    grid-row: 5;
+    grid-column: 2 / span 2;
+}

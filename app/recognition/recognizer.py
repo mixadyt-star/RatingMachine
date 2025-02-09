@@ -26,19 +26,6 @@ def recognize(image: MatLike):
         predictions = model(images)
         labels_index = torch.argmax(predictions, dim = 1)
         labels = [dataset.classes[ind.item()] for ind in labels_index]
-    
-    
-    # import matplotlib.pyplot as plt
-    # plt.figure(figsize=(12, 12))
-    # for i in range(52):
-    #     plt.subplot(13, 4, i + 1)  # 8 строк и 4 колонки
-    #     plt.imshow(images[i].reshape(80, 180, 1), cmap="gray")  # показываем изображение
-    #     plt.title(f'Pred: {labels[i]}')  # отображаем предсказание
-    #     plt.axis('off')  # отключаем оси
-
-    # plt.tight_layout()
-    # plt.show()
-
 
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     answers = {}
@@ -57,4 +44,13 @@ def recognize(image: MatLike):
                 min_distance = distance
                 answers[labels[i]] = labels[j]
 
-    print(answers)
+    for i, contour in enumerate(cell_contours):
+        cv2.polylines(table_image, np.array([contour]), isClosed=True, color = (133, 71, 37), thickness = 2)
+
+        top_left = contour.min(axis = 0)[0]
+        text_position = (top_left[0] + 10, top_left[1] + 30)
+
+        cv2.putText(table_image, labels[i], text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+
+
+    return (answers, table_image)

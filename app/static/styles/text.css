@@ -12,17 +12,38 @@
     border-radius: 5px;
 }
 
+.classic-red-color {
+    color: #cd0505;
+}
+
+.classic-blue-color {
+    color: #254785;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.no-weight {
+    font-weight: normal !important;
+}
+
+.no-select {
+    user-select: none !important;
+}
+
 .align-text-left {
-    text-align: start;
+    text-align: start !important;
 }
 
 .align-text-right {
-    text-align: end;
+    text-align: end !important;
 }
 
 .text {
     line-height: 15px;
     font-weight: bold;
+    text-align: center;
     font-family: "DIN 2014 Rounded", Arial, sans-serif;
 }
 

@@ -48,7 +48,7 @@ class RecognitionModel(Module):
         self.dropout = Dropout(0)
         self.linear2 = Linear(
             in_features = 64,
-            out_features = 35
+            out_features = 36
         )
         self.act2 = Softmax(dim = 1)
 

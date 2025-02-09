@@ -47,9 +47,10 @@ def create_word_user(document: Document, data: List[str]) -> NoReturn:
         word_api.align_paragraph(value_paragraph, "left")
         word_api.write_text_to_paragraph(value_paragraph, 
                                          f"{data[i]}",
-                                         underline = True)
+                                         underline = True,
+                                         size = 14)
 
-    secret_code = security.create_secret_code()
+    secret_code = data[4]
     qrcode = security.create_qrcode(secret_code)
 
     image_paragraph = image_cell.paragraphs[0]
@@ -110,6 +111,7 @@ if __name__ == "__main__":
             "Name",
             "Form",
             "1.01.1990",
-            "Someting for test"
+            "Someting for test",
+            "secret_code"
         ]
     )

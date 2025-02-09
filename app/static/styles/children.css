@@ -8,11 +8,6 @@
     grid-template-columns: repeat(4, 1fr);
 }
 
-.add-child-grid-item {
-    grid-row: 1;
-    grid-column: 4;
-}
-
 .full-name-grid-item {
     grid-row: 1;
     grid-column: 2 / span 2;

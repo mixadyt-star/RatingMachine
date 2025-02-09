@@ -5,7 +5,7 @@ from PIL import Image
 
 class CellsDataset(Dataset):
     def __init__(self, transform):
-        self.classes = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        self.classes = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ "
         self.transform = transform
 
         with open("dataset/labels.json", 'r') as labels:

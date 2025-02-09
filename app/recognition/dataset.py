@@ -13,7 +13,7 @@ default_transform = transforms.Compose([
 class CellsDataset(Dataset):
     def __init__(self, transform, images):
         super().__init__()
-        self.classes = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        self.classes = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ "
         self.transform = transform
         self.images = images
 

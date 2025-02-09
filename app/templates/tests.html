@@ -1,0 +1,237 @@
+<script>
+    null_form()
+</script>
+<div class="wrapper">
+    <div class="shadow-block">
+        <form action="" method="post">
+            <div class="grid tests-grid">
+                <div class="grid-item grid-item-wrapper">
+                    <svg 
+                        width="50"
+                        height="50"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon inline"
+                        onclick="window.location.href = window.location.origin + '/'"
+                    >
+                        <path d="M4.5 8C8.5 8 11 8 15 8C15 8 15 8 15 8C15 8 20 8 20 12.7059C20 18 15 18 15 18C11.5714 18 9.71429 18 6.28571 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.5 11.5C6.13317 10.1332 5.36683 9.36683 4 8C5.36683 6.63317 6.13317 5.86683 7.5 4.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="inline">
+                        <p class="text x-large classic-red-color no-margin" style="width: initial;">
+                            {{ variables.get("subject").upper() }}
+                        </p>
+                        <p class="text x-large classic-red-color no-margin" style="width: initial;">
+                            {{ variables.get("class") }} класс
+                        </p>
+                    </div>
+                </div>
+                <div class="grid-item grid-item-wrapper test-name-grid-item">
+                    <input type="text" class="text-input text larger" name="test_name" placeholder="Введите тему теста...">
+                </div>
+                <div class="grid-item grid-item-wrapper">
+                    <input class="button text larger" type="submit" value="Добавить">
+                </div>
+                {% for test_id in variables["tests"] %}
+                    <div class="grid-item grid-item-wrapper theme-grid-item">
+                        <p class="text align-text-left larger inline no-weight classic-blue-color">
+                            {{ loop.index0 + 1 }}. {{ variables["tests"][test_id][0] }}
+                        </p>
+                        <div class="inline classic-blue-color">
+                            <svg 
+                                stroke-width="2" 
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                onclick="edit_quests({{ test_id }})"
+                                class="icon inline"
+                            >
+                            <path d="M7.90039 8.07954C7.90039 3.30678 15.4004 3.30682 15.4004 8.07955C15.4004 11.4886 11.9913 10.8067 11.9913 14.8976" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19.01L12.01 18.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <svg 
+                                stroke-width="2" 
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                onclick="edit_tests({{ test_id }})"
+                                class="icon inline"
+                            >
+                                <path d="M4 21.4V2.6C4 2.26863 4.26863 2 4.6 2H16.2515C16.4106 2 16.5632 2.06321 16.6757 2.17574L19.8243 5.32426C19.9368 5.43679 20 5.5894 20 5.74853V21.4C20 21.7314 19.7314 22 19.4 22H4.6C4.26863 22 4 21.7314 4 21.4Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 10L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 18L16 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 14L12 14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 2V5.4C16 5.73137 16.2686 6 16.6 6H20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <svg 
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon inline"
+                                onclick="delete_test({{ test_id }})"
+                            >
+                                <path d="M3.03919 4.2939C3.01449 4.10866 3.0791 3.92338 3.23133 3.81499C3.9272 3.31953 6.3142 2 12 2C17.6858 2 20.0728 3.31952 20.7687 3.81499C20.9209 3.92338 20.9855 4.10866 20.9608 4.2939L19.2616 17.0378C19.0968 18.2744 18.3644 19.3632 17.2813 19.9821L16.9614 20.1649C13.8871 21.9217 10.1129 21.9217 7.03861 20.1649L6.71873 19.9821C5.6356 19.3632 4.90325 18.2744 4.73838 17.0378L3.03919 4.2939Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M3 5C5.57143 7.66666 18.4286 7.66662 21 5" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M11 18L14 14.5M14 14.5L19 17M14 14.5L20 11.5" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M4.5 16L7.73595 15.5377C7.90405 15.5137 8.07446 15.562 8.20491 15.6708L11 18L14 21" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8 15.5L10.6149 12.4493C10.8284 12.2001 11.2025 12.1688 11.4546 12.3788L14 14.5" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="inline classic-red-color">
+                            <p class="text larger no-weight inline" style="margin-left: 20px;">
+                                Бланки
+                            </p>
+                            <svg 
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon inline"
+                                onclick="generate_blanks({{ test_id }})"
+                            >
+                                <path d="M17.5714 18H20.4C20.7314 18 21 17.7314 21 17.4V11C21 8.79086 19.2091 7 17 7H7C4.79086 7 3 8.79086 3 11V17.4C3 17.7314 3.26863 18 3.6 18H6.42857" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8 7V3.6C8 3.26863 8.26863 3 8.6 3H15.4C15.7314 3 16 3.26863 16 3.6V7" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M6.09782 20.3151L6.42855 18L6.92639 14.5151C6.96862 14.2196 7.22177 14 7.52036 14H16.4796C16.7782 14 17.0313 14.2196 17.0736 14.5151L17.5714 18L17.9021 20.3151C17.9538 20.6766 17.6733 21 17.3082 21H6.69179C6.32666 21 6.04618 20.6766 6.09782 20.3151Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M17 10.01L17.01 9.99889" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <svg  
+                                stroke-width="2"
+                                viewBox="0 0 24 24"  
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon inline"
+                                onclick="show_blanks({{ test_id }})"
+                            >
+                                <path d="M3 13C6.6 5 17.4 5 21 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 17C10.3431 17 9 15.6569 9 14C9 12.3431 10.3431 11 12 11C13.6569 11 15 12.3431 15 14C15 15.6569 13.6569 17 12 17Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% for form in variables["children"] %}
+                    <div class="grid-item grid-item-wrapper baseline-content children-option-grid-item" style="grid-row: {{ 2 * loop.index0 + 2 }} / span 2;">
+                        <button class="button text larger" onclick="toggle_menu('{{ form }}')" id="dropdown-{{ form }}">
+                            Список {{ form }}
+                        </button>
+                        <div class="dropdown-content" id="{{ form }}">
+                            <label class="text no-select no-weight align-text-left"><input type="checkbox" id="all-checkbox-{{ form }}"> Все</label>
+                            {% for child_id in variables["children"][form] %}
+                                <label class="text no-select no-weight align-text-left"><input type="checkbox" name="children" value="{{ child_id }}">{{ variables["children"][form][child_id] }}</label>
+                            {% endfor %}
+                        </div>
+                        <script>
+                            prevent_default("dropdown-{{ form }}")
+                            init_checkboxes("all-checkbox-{{ form }}", "{{ form }}")
+                        </script>
+                    </div>
+                {% endfor %}
+                <div class="grid-item grid-item-wrapper upload-blanks-grid-item">
+                    <input type="file" id="input-blanks" accept=".jpg,.png" style="display: none;" multiple>
+                    <button class="button text x-large" id="input-blanks-button">
+                        Загрузить заполненные бланки ответов
+                    </button>
+                    <script>
+                        init_blanks_input()
+                        prevent_default("input-blanks-button")
+                    </script>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{%for test_id in variables["tests"]%}
+    <div id="dark-background-{{ test_id }}" class="dark-background hidden">
+        <div class="wrapper hidden" id="edit-test-wrapper-{{ test_id }}" style="height: calc(100% - 60px);padding: 0 100px">
+            <div class="grid shadow-block" id="edit-test-block-{{ test_id }}" style="margin-top: 50px;">
+                <div class="grid edit-test-grid" style="margin: auto;">
+                    <p class="grid-item text x-large classic-blue-color">
+                        ОТВЕТЫ
+                    </p>
+                    <div class="grid-item grid-item-wrapper">
+                        <table>
+                            {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                            {% for i in range(14) %}
+                                <tr>
+                                    {% for j in range(4) %}
+                                        {% if (i < 12 or j < 2) %}
+                                            <th>
+                                                {% if (i % 2 == 0) %}
+                                                    <p class="text xx-large no-weight" style="line-height: 0;margin: 0;font-family: Cambria;">
+                                                        {{ alphabet[i * 2 + j] }}
+                                                    </p>
+                                                {% else %}
+                                                    <input class="text-input x-large classic-red-color" type="text" value="{{ variables['tests'][test_id][1][(i // 2) * 4 + j] }}" style="height: initial;width: 10%;" maxlength="1" name="answer-input-{{ test_id }}">
+                                                {% endif %}
+                                            </th>
+                                        {% elif (i == 12 and j == 2) %}
+                                            <th rowspan="2" colspan="2">
+
+                                            </th>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            <script>
+                                set_input_range("answer-input-{{ test_id }}")
+                            </script>
+                        </table>
+                    </div>
+                    <div class="grid-item grid-item-wrapper">
+                        <button class="button text x-large" id="save-answers-button-{{ test_id }}" onclick="save_answers({{ test_id }})">
+                            Сохранить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dark-background-quests-{{ test_id }}" class="dark-background hidden">
+        <div class="wrapper hidden" id="edit-quests-wrapper-{{ test_id }}" style="height: 200px;padding: 0 100px">
+            <div class="grid shadow-block" id="edit-quests-block-{{ test_id }}" style="margin-top: 300px;">
+                <div class="grid edit-quests-grid" style="margin: auto;">
+                    <p class="grid-item text x-large classic-blue-color quest-test-name-grid-item">
+                        {{ variables["tests"][test_id][0] }}
+                    </p>
+                    <div class="grid-item grid-item-wrapper">
+                        <input type="file" id="file-input-{{ test_id }}" style="display: none;">
+                        <button class="button text x-large" id="input-button-{{ test_id }}">
+                            Выгрузить вопросы
+                        </button>
+                    </div>
+                    <script>
+                        init_file_input({{ test_id }})
+                    </script>
+                    <div class="grid-item grid-item-wrapper">
+                        <button class="button text x-large" id="output-button-{{ test_id }}" onclick="output_file({{ test_id }})">
+                            Скачать вопросы
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dark-background-blanks-{{ test_id }}" class="dark-background hidden" style="position: fixed;overflow: auto;text-align: center;">
+        <div class="wrapper hidden" id="show-blanks-wrapper-{{ test_id }}" style="height: 200px;padding: 0 100px">
+            <div class="shadow-block" id="show-blanks-block-{{ test_id }}" style="margin-top: 50px;height: initial;padding: 10px 0;">
+                {% for name, test_id, answers, file, sorted in variables["blanks"] %}
+                    <div name="blank-for-{{ test_id }}">
+                        <p class="text x-large">
+                            {{ name }}
+                        </p>
+                        <p class="text" style="display: inline-block;padding-right: 20px;line-height: 20px;vertical-align: top;">
+                            {% for letter in sorted %}
+                                {% if answers[letter] != ' ' %}
+                                    {{ letter }}: {{ answers[letter] }}<br>
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                        <img src="{{ file }}" style="display: inline-block;">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}

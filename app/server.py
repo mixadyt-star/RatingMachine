@@ -1,12 +1,19 @@
 from flask import Flask, request, session, render_template, send_file
+from datetime import datetime
 from threading import Thread
+import numpy as np
+import datetime
+import random
+import base64
 import json
+import cv2
 
 from utils.web_errors import error_checker, PAGE, JSON
 from utils import email_worker, security
 from data import database, storing
+from recognition import recognizer
 from documents import generator
-import config
+from plotter import diograms, class_graph, user_graph
 
 app = Flask(__name__, template_folder = "templates")
 
@@ -83,7 +90,266 @@ def children_class():
     else:
         return (1, PAGE, "Вы не вошли в аккаунт", None) # AccessError
     
+@app.route("/tests", methods = ["GET", "POST"])
+@error_checker
+def tests():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            class_ = request.args.get("class", None)
+            subject = request.args.get("subject", None)
+            if (class_ and subject):
+                if (request.method == "POST"):
+                    test_name = request.form.get("test_name", None)
+                    if test_name:
+                        database.register_test(test_name, subject, class_)
+                    else:
+                        return (3, PAGE, "Вы должны передать название темы теста", None) # FewValuesError
+
+                variables = {
+                    "class": class_,
+                    "subject": subject,
+                    "tests": {test_data[0]: (test_data[1], json.loads(test_data[4])) for test_data in database.get_tests(class_, subject)},
+                    "children": {form[0]: {child_data[0]: child_data[1] for child_data in database.get_children(form[0])} for form in database.get_forms_by_class(class_)},
+                    "blanks": [(database.get_child(user_id)[1], test_id, json.loads(answers), file, sorted(json.loads(answers))) for _, user_id, test_id, answers, file in database.get_blanks(database.get_tests(class_, subject))]
+                }
+                return (0, PAGE, '', init_page("tests.html", variables))
+            else:
+                return (3, PAGE, "Не получен класс или предмет", None) # FewValuesError
+        else:
+            return (1, PAGE, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, PAGE, "Вы не вошли в аккаунт", None) # AccessError
+
+def recognize_blank(data_url: str):
+    _, data = data_url.split(',')
+    image_data = base64.b64decode(data)
+    image_array = np.frombuffer(image_data, np.uint8)
+    orig_image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     
+    answers, image = recognizer.recognize(orig_image)
+    _, buffer = cv2.imencode(".jpg", image)
+    data = base64.b64encode(buffer).decode()
+    file = f"data:image/jpeg;base64,{data}"
+    hash_code = security.read_qrcode(orig_image)
+    user_id, test_id, _ = database.get_working_test(hash_code)
+
+    true_answers = json.loads(database.get_test(test_id)[4])
+    subject = database.get_test(test_id)[2]
+
+    count = 0
+    correct = 0
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    for i, answer in enumerate(true_answers):
+        if answer != "":
+            count += 1
+            
+            if answer == answers[alphabet[i]]:
+                correct += 1
+
+    if (correct / count > 0.8):
+        mark = 5
+    elif (correct / count > 0.7):
+        mark = 4
+    elif (correct / count > 0.6):
+        mark = 3
+    else:
+        mark = 2
+
+    database.register_blank(user_id, test_id, answers, file)
+    marks = json.loads(database.get_child(user_id)[3])
+    marks.append({
+        "subject": subject,
+        "date": datetime.datetime.today().strftime('%d.%m.%Y'),
+        "mark": str(mark)
+    })
+    database.update_child(user_id, marks)
+    database.delete_working_test(hash_code)
+
+@app.route("/tests/upload_blanks", methods = ["POST"])
+@error_checker
+def upload_blanks():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+    
+            blanks = data.get("blanks", None)
+            if blanks:
+                for blank in blanks:
+                    thread = Thread(target = recognize_blank, args = (blank,))
+                    thread.start()
+                return (0, JSON, '', None)
+            else:
+                return (3, JSON, "Бланки не получены", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
+@app.route("/tests/download_questions", methods = ["POST"])
+@error_checker
+def download_questions():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+    
+            test_id = data.get("test_id", None)
+            if test_id:
+                if database.check_test(test_id):
+                    questions = database.get_questions(test_id)[0]
+
+                    if questions:
+                        return (0,  JSON, '', questions)
+                    else:
+                        return (6, JSON, "Вопросы не загружены", None) # ContentDeleted
+                else:
+                    return (6, JSON, "Теста не существует", None) # ContentDeleted
+            else:
+                return (3, JSON, "ID теста не получен", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
+@app.route("/tests/upload_questions", methods = ["POST"])
+@error_checker
+def upload_questions():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+    
+            questions = data.get("questions", None)
+            test_id = data.get("test_id", None)
+            if test_id:
+                if database.check_test(test_id):
+                    if questions:
+                        database.edit_questions(test_id, questions)
+
+                        return (0, JSON, '', None)
+                    else:
+                        return (3, JSON, "Вы должны загрузить файл", None) #FewValuesError
+                else:
+                    return (6, JSON, "Теста не существует", None) # ContentDeleted
+            else:
+                return (3, JSON, "ID теста не получен", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
+@app.route("/tests/delete", methods = ["POST"])
+@error_checker
+def delete_test():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+    
+            test_id = data.get("test_id", None)
+            if test_id:
+                if database.check_test(test_id):
+                    database.delete_test(test_id)
+                    return (0, JSON, '', {})
+                else:
+                    return (6, JSON, "Теста не существует", None) # ContentDeleted
+            else:
+                return (3, JSON, "ID теста не получен", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
+@app.route("/tests/answers", methods = ["POST"])
+@error_checker
+def edit_answers():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+    
+            answers = data.get("answers", None)
+            test_id = data.get("test_id", None)
+            if test_id:
+                if database.check_test(test_id):
+                    if (answers and len(answers) == 26):
+                        database.edit_answers(int(test_id), answers)
+                        return (0, JSON, '', None)
+                    else:
+                        return (3, JSON, "Ответы не получены", None) # FewValuesError
+                else:
+                    return (6, JSON, "Теста не существует", None) # ContentDeleted
+            else:
+                return (3, JSON, "ID теста не получен", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
+@app.route("/tests/download", methods = ["POST"])
+@error_checker
+def download():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+    
+            children = data.get("children", None)
+            test_id = data.get("test_id", None)
+            if test_id:
+                if database.check_test(test_id):
+                    if children:
+                        current_date = datetime.now().strftime("%d.%m.%Y")
+                        users = []
+                        for child_id in children:
+                            if database.check_child(child_id):
+                                secret_code = random.randint(10000000, 10000000000)
+                                database.register_working_test(child_id, test_id, security.hash(secret_code))
+
+                                child_data = database.get_child(child_id)
+                                child_name = child_data[1]
+                                child_form = child_data[2]
+
+                                test_name = database.get_test(test_id)[1]
+
+                                tmp = []
+                                tmp.append(child_name)
+                                tmp.append(child_form)
+                                tmp.append(current_date)
+                                tmp.append(test_name)
+                                tmp.append(secret_code)
+
+                                users.append(tmp)
+                            else:
+                                return (6, JSON, f"Ребёнка с ID {child_id} не существует", None) # ContentDeleted
+                    else:
+                        return (3, JSON, "Нужно выбрать хотя бы одного ученика", None) # FewValuesError
+                else:
+                    return (6, JSON, "Теста не существует", None) # ContentDeleted
+            else:
+                return (3, JSON, "ID теста не получен", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
+    bytes_stream = generator.create_word_users(users)
+    file = base64.b64encode(bytes_stream.getvalue()).decode()
+    return (0, JSON, '', file)
 
 @app.route("/children/class/delete", methods = ["POST"])
 @error_checker
@@ -167,6 +433,81 @@ def register():
     
     return (0, PAGE, '', init_page("register.html"))
 
+@app.route("/stats", methods = ["GET"])
+@error_checker
+def stats():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            subject = request.args.get("subject", None)
+            if subject:
+                stats_data = database.get_stats_data()
+                diogram_uri = f"data:image/jpeg;base64,{base64.b64encode(diograms.plot(diograms.parse(stats_data, subject)).getvalue()).decode('utf-8')}"
+
+                variables = {
+                    "subject": subject,
+                    "diogram_uri": diogram_uri
+                }
+
+                return (0, PAGE, '', init_page("stats.html", variables))
+            else:
+                return (3, PAGE, "Не получен предмет", None) # FewValuesError
+        else:
+            return (1, PAGE, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, PAGE, "Вы не вошли в аккаунт", None) # AccessError
+    
+@app.route("/stats/class", methods = ["GET"])
+@error_checker
+def stats_class():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            subject = request.args.get("subject", None)
+            class_ = request.args.get("class", None)
+            if (subject and class_):
+                stats_data = database.get_stats_data()
+                graph_uri = f"data:image/jpeg;base64,{base64.b64encode(class_graph.plot(class_graph.parse(stats_data, subject, class_)).getvalue()).decode('utf-8')}"
+
+                variables = {
+                    "subject": subject,
+                    "diogram_uri": graph_uri,
+                    "class": class_,
+                    "children": {form[0]: {child_data[0]: child_data[1] for child_data in database.get_children(form[0])} for form in database.get_forms_by_class(class_)},
+                }
+
+                return (0, PAGE, '', init_page("stats_class.html", variables))
+            else:
+                return (3, PAGE, "Не получен предмет или класс", None) # FewValuesError
+        else:
+            return (1, PAGE, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, PAGE, "Вы не вошли в аккаунт", None) # AccessError
+    
+@app.route("/stats/render", methods = ["POST"])
+@error_checker
+def render_user():
+    if check_login():
+        if (session["type"] == "Teacher"):
+            try:
+                user_data = json.loads(request.data)
+            except json.JSONDecodeError:
+                return (2, JSON, "Не удалось распаковать запрос", None) # JsonDecodeError
+            
+            id = user_data.get("id", None)
+            subject = user_data.get("subject", None)
+            if (id and subject):
+                if database.check_child(id):
+                    user_data = database.get_child(id)
+                    graph_uri = f"data:image/jpeg;base64,{base64.b64encode(user_graph.plot(user_graph.parse(user_data, subject)).getvalue()).decode('utf-8')}"
+
+                    return (0, JSON, '', graph_uri)
+                return (6, JSON, "Ученика не существует", None) # ContentDeleted
+            else:
+                return (3, JSON, "Не получен айди ученика или предмет", None) # FewValuesError
+        else:
+            return (1, JSON, "Данный раздел доступен только учителям", None) # AccessError
+    else:
+        return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
+
 @app.route("/email_verification", methods = ["POST"])
 def email_verification():
     if check_login():
@@ -185,35 +526,3 @@ def email_verification():
 
     return init_page("email_verification.html")
 
-# # TODO: remove it
-# @app.route("/api/register", methods = ["GET", "POST"])
-# def register():
-#     type = request.args.get("type", None)
-
-#     if (type == "child"):
-#         email = request.args.get("email", None)
-#         password = request.args.get("password", None)
-#         full_name = request.args.get("full_name", None)
-
-#         database.register_child(email, password, full_name)
-#     elif (type == "teacher"):
-#         email = request.args.get("email", None)
-#         password = request.args.get("password", None)
-#         full_name = request.args.get("full_name", None)
-
-#         database.register_teacher(email, password, full_name)
-
-# # TODO: remove it
-# @app.route("/api/download", methods = ["GET"])
-# def download():
-#     users = [
-#         [
-#             "Насыров Амаль Робертович",
-#             "8Б",
-#             "23.11.2024",
-#             "Структура общества"
-#         ]
-#     ]
-
-#     bytes_stream = generator.create_word_users(users)
-#     return send_file(bytes_stream, as_attachment = True, download_name = "Blanks.docx")

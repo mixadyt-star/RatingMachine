@@ -20,8 +20,10 @@ async function check_login() {
             password: password
         }),
         on_error = function(_) {
-            submit_button.disabled = false
-            submit_button.innerText = "Войти"
+            setTimeout(function () {
+                submit_button.disabled = false
+                submit_button.innerText = "Сохранить"
+            }, 1000)
         }
     )
 }

@@ -1,5 +1,33 @@
 <div class="wrapper">
     <div class="shadow-block">
-        <img src="{{ url_for('static', filename='images/banner.png') }}" style="width: 100%;">
+        <div class="grid main-page-grid">
+            <p class="grid-item text larger classic-blue-color">
+                РАБОТА С ТЕСТАМИ
+            </p>
+            <p class="grid-item text larger classic-blue-color">
+                ПРЕДМЕТ
+            </p>
+            <p class="grid-item text larger classic-blue-color">
+                СТАТИСТИКА
+            </p>
+            {% for subject in ["История", "Биология", "География"] %}
+                <div class="grid-item grid-item-wrapper">
+                    <button class="button text x-large" style="width: 45%;float: inline-start;" onclick="window.location.href = window.location.origin + '/tests?class=10&subject={{ subject }}'">
+                        10 класс
+                    </button>
+                    <button class="button text x-large" style="width: 45%;float: inline-end;" onclick="window.location.href = window.location.origin + '/tests?class=11&subject={{ subject }}'">
+                        11 класс
+                    </button>
+                </div>
+                <p class="grid-item text x-large classic-red-color">
+                    {{ subject }}
+                </p>
+                <div class="grid-item grid-item-wrapper">
+                    <button class="button text x-large" onclick="window.location.href = window.location.origin + '/stats?subject={{ subject }}'">
+                        перейти
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
