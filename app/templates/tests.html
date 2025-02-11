@@ -198,7 +198,7 @@
                     <div class="grid-item grid-item-wrapper">
                         <input type="file" id="file-input-{{ test_id }}" style="display: none;">
                         <button class="button text x-large" id="input-button-{{ test_id }}">
-                            Выгрузить вопросы
+                            Загрузить вопросы
                         </button>
                     </div>
                     <script>
@@ -216,20 +216,22 @@
     <div id="dark-background-blanks-{{ test_id }}" class="dark-background hidden" style="position: fixed;overflow: auto;text-align: center;">
         <div class="wrapper hidden" id="show-blanks-wrapper-{{ test_id }}" style="height: 200px;padding: 0 100px">
             <div class="shadow-block" id="show-blanks-block-{{ test_id }}" style="margin-top: 50px;height: initial;padding: 10px 0;">
-                {% for name, test_id, answers, file, sorted in variables["blanks"] %}
-                    <div name="blank-for-{{ test_id }}">
-                        <p class="text x-large">
-                            {{ name }}
-                        </p>
-                        <p class="text" style="display: inline-block;padding-right: 20px;line-height: 20px;vertical-align: top;">
-                            {% for letter in sorted %}
-                                {% if answers[letter] != ' ' %}
-                                    {{ letter }}: {{ answers[letter] }}<br>
-                                {% endif %}
-                            {% endfor %}
-                        </p>
-                        <img src="{{ file }}" style="display: inline-block;">
-                    </div>
+                {% for name, test_id_, answers, file, sorted in variables["blanks"] %}
+                    {% if test_id_ == test_id %}
+                        <div name="blank-for-{{ test_id_ }}">
+                            <p class="text x-large">
+                                {{ name }}
+                            </p>
+                            <p class="text" style="display: inline-block;padding-right: 20px;line-height: 20px;vertical-align: top;">
+                                {% for letter in sorted %}
+                                    {% if answers[letter] != ' ' %}
+                                        {{ letter }}: {{ answers[letter] }}<br>
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                            <img src="{{ file }}" style="display: inline-block;">
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

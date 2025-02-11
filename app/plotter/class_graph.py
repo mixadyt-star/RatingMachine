@@ -21,7 +21,7 @@ def parse(stats_data: List[tuple], subject: str, class_: int) -> dict:
                 for mark in marks:
                     if (json.loads(f'"{mark["subject"]}"') == subject and mark["date"]):
                         n, mean = data[form].get(mark["date"], [0, 0])
-                        data[form][mark["date"]] = [n + 1, (mean * n + mark["mark"]) / (n + 1)]
+                        data[form][mark["date"]] = [n + 1, (mean * n + int(mark["mark"])) / (n + 1)]
 
     return data
 

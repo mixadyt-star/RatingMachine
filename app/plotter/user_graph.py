@@ -14,7 +14,7 @@ def parse(user_data: List[tuple], subject: str) -> dict:
     if (len(marks) > 0):
         for mark in marks:
             if (json.loads(f'"{mark["subject"]}"') == subject and mark["date"]):
-                data[mark["date"]] = [mark["mark"]]
+                data[mark["date"]] = int(mark["mark"])
 
     return data
 

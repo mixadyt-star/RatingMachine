@@ -50,8 +50,6 @@ def find_cells(table_image: MatLike) -> List[MatLike]:
     cells = []
 
     for cnt in cells_cnts:
-        tmp = table_image.copy()
-        
         _, _, w, h = cv2.boundingRect(cnt)
         area = cv2.contourArea(cnt)
 

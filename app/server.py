@@ -2,7 +2,6 @@ from flask import Flask, request, session, render_template, send_file
 from datetime import datetime
 from threading import Thread
 import numpy as np
-import datetime
 import random
 import base64
 import json
@@ -425,14 +424,6 @@ def login():
         else:
             return (5, JSON, "Неправильный пароль или почта аккаунта", None) # UserOrPasswordWrongError
 
-@app.route("/register", methods = ["GET"])
-@error_checker
-def register():
-    if check_login():
-        return (1, PAGE, "Вы уже вошли в аккаунт", None) # AccessError
-    
-    return (0, PAGE, '', init_page("register.html"))
-
 @app.route("/stats", methods = ["GET"])
 @error_checker
 def stats():
@@ -508,7 +499,16 @@ def render_user():
     else:
         return (1, JSON, "Вы не вошли в аккаунт", None) # AccessError
 
+@app.route("/register", methods = ["GET"])
+@error_checker
+def register():
+    if check_login():
+        return (1, PAGE, "Вы уже вошли в аккаунт", None) # AccessError
+    
+    return (0, PAGE, '', init_page("register.html"))
+
 @app.route("/email_verification", methods = ["POST"])
+@error_checker
 def email_verification():
     if check_login():
         return (1, PAGE, "Вы уже вошли в аккаунт", None) # AccessError
@@ -516,13 +516,16 @@ def email_verification():
     user_email = request.form.get("email", None)
     user_password = request.form.get("password", None)
 
-    if (user_email == None or user_password == None):
-        return (4, PAGE, "Некорректный запрос", None) # TypeNotCorrectError
+    if (user_email and user_password):
+        if (not database.search_for_teacher(user_email)):
+            verification_code = security.create_secret_code(length = 8).lower()
+            email_worker.store_code(user_email, verification_code)
 
-    verification_code = security.create_secret_code(length = 8).lower()
-    email_worker.store_code(user_email, verification_code)
+            Thread(target = email_worker.send_verification, args = [user_email, verification_code]).start()
 
-    Thread(target = email_worker.send_verification, args = [user_email, verification_code]).start()
-
-    return init_page("email_verification.html")
+            return (0, PAGE, '', init_page("email_verification.html"))
+        else:
+            return (1, PAGE, "Аккаунт уже существует", None) # AccessError
+    else:
+        return (3, PAGE, "Не получен email или пароль", None) # FewValuesError
 
