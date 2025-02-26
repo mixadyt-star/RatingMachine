@@ -2,7 +2,7 @@ from typing import NoReturn
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP_SSL
-import hashlib
+import json
 import ssl
 
 from data import storing
@@ -12,7 +12,13 @@ def store_code(email: str, code: str | int) -> NoReturn:
     storing.store("data/email_codes.json", email, str(code))
 
 def get_code(email: str) -> str | None:
-    storing.get_data("data/email_codes.json")[email]
+    return storing.get_data("data/email_codes.json")[email]
+
+def delete_code(email: str) -> NoReturn:
+    data = storing.get_data("data/email_codes.json")
+    data.pop(email)
+    with open("data/email_codes.json", "w") as f:
+        f.write(json.dumps(data))
 
 def send_email(receiver: str, subject: str, body: str) -> NoReturn:
     context = ssl.create_default_context()

@@ -507,25 +507,53 @@ def register():
     
     return (0, PAGE, '', init_page("register.html"))
 
-@app.route("/email_verification", methods = ["POST"])
+@app.route("/email_verification", methods = ["POST", "GET"])
 @error_checker
 def email_verification():
     if check_login():
         return (1, PAGE, "Вы уже вошли в аккаунт", None) # AccessError
     
-    user_email = request.form.get("email", None)
-    user_password = request.form.get("password", None)
+    if (request.method == "POST"):
+        user_email = request.form.get("email", None)
+        user_password = request.form.get("password", None)
 
-    if (user_email and user_password):
-        if (not database.search_for_teacher(user_email)):
-            verification_code = security.create_secret_code(length = 8).lower()
-            email_worker.store_code(user_email, verification_code)
+        if (user_email and user_password):
+            if (not database.search_for_teacher(user_email)):
+                verification_code = security.create_secret_code(length = 8).lower()
+                email_worker.store_code(user_email, verification_code)
 
-            Thread(target = email_worker.send_verification, args = [user_email, verification_code]).start()
+                Thread(target = email_worker.send_verification, args = [user_email, verification_code]).start()
 
-            return (0, PAGE, '', init_page("email_verification.html"))
+                return (0, PAGE, '', init_page("email_verification.html", {"email": user_email, "password": security.hash(user_password)}))
+            else:
+                return (1, PAGE, "Аккаунт уже существует", None) # AccessError
         else:
-            return (1, PAGE, "Аккаунт уже существует", None) # AccessError
-    else:
-        return (3, PAGE, "Не получен email или пароль", None) # FewValuesError
+            return (3, PAGE, "Не получен email или пароль", None) # FewValuesError
+    elif (request.method == "GET"):
+        code = "00000000"
+        email = None
+        password = None
+        for arg in request.args:
+            val = request.args[arg]
+            if arg == "email":
+                email = val
+                continue
+            if arg == "password":
+                password = val
+                continue
 
+            if not val:
+                return (3, PAGE, "Не получен символ", None) # FewValuesError
+            code = list(code)
+            code[int(arg) - 1] = val
+            code = ''.join(code)
+
+        if (code and password):
+            if (code == email_worker.get_code(email)):
+                email_worker.delete_code(email)
+                database.register_teacher(email, security.hash(password))
+                return (0, PAGE, '', init_page("main.html"))
+            else:
+                return (1, PAGE, "Неверный код", None) # AccessError
+        else:
+            return (3, PAGE, "Не получен email или пароль", None) # FewValuesError
