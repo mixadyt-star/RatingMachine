@@ -13,6 +13,7 @@ from data import database, storing
 from recognition import recognizer
 from documents import generator
 from plotter import diograms, class_graph, user_graph
+import config
 
 app = Flask(__name__, template_folder = "templates")
 
@@ -502,6 +503,9 @@ def render_user():
 @app.route("/register", methods = ["GET"])
 @error_checker
 def register():
+    if (not config.REGISTRATION_ENABLED):
+        return (1, PAGE, "На данный момент действие невозможно", None) # AccessError
+
     if check_login():
         return (1, PAGE, "Вы уже вошли в аккаунт", None) # AccessError
     
@@ -510,6 +514,9 @@ def register():
 @app.route("/email_verification", methods = ["POST", "GET"])
 @error_checker
 def email_verification():
+    if (not config.REGISTRATION_ENABLED):
+        return (1, PAGE, "На данный момент действие невозможно", None) # AccessError
+    
     if check_login():
         return (1, PAGE, "Вы уже вошли в аккаунт", None) # AccessError
     
