@@ -160,7 +160,7 @@ def recognize_blank(data_url: str):
     marks = json.loads(database.get_child(user_id)[3])
     marks.append({
         "subject": subject,
-        "date": datetime.datetime.today().strftime('%d.%m.%Y'),
+        "date": datetime.today().strftime('%d.%m.%Y'),
         "mark": str(mark)
     })
     database.update_child(user_id, marks)
