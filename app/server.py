@@ -566,4 +566,4 @@ def email_verification():
             return (3, PAGE, "Не получен email или пароль", None) # FewValuesError
 
 def start_app():
-    app.run()
+    app.run(port=80)
