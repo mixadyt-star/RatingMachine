@@ -564,3 +564,6 @@ def email_verification():
                 return (1, PAGE, "Неверный код", None) # AccessError
         else:
             return (3, PAGE, "Не получен email или пароль", None) # FewValuesError
+
+def start_app():
+    app.run()
