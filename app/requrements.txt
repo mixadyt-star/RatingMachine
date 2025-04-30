@@ -1,0 +1,10 @@
+flask
+python-docx
+pillow
+qrcode
+numpy
+opencv-python
+torch
+torchvision
+matplotlib
+pyzbar
