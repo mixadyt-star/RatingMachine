@@ -1,5 +1,8 @@
 # SUPERViSiON
 ## Установка
+# Автоматическая
+запустите файл `run.bat` для раьоты приложения
+# Ручная
 пропишите
 
 `python install -r requrements.txt`
